@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace NUtilities.Helper
 {
-    public static class Logger
+    public static class Log
     {
         public static bool Enable = true;
 
