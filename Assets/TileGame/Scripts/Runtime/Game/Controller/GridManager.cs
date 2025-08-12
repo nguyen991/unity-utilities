@@ -1,0 +1,47 @@
+using System;
+using System.Collections.Generic;
+using TileGame.Level;
+using UnityEngine;
+using UnityEngine.Pool;
+
+namespace TileGame.Game.Controller
+{
+    public class GridManager : MonoBehaviour
+    {
+        [SerializeField] private GameObject tilePrefab;
+        
+        private IObjectPool<Tile> _tilePool;
+        private List<Tile> _availableTiles;
+        private List<Tile> _selectedTiles;
+
+        private void Awake()
+        {
+            _tilePool = new ObjectPool<Tile>(CreateTile, actionOnGet: GetTile, actionOnRelease: ReleaseTile);
+            _availableTiles = new List<Tile>();
+            _selectedTiles = new List<Tile>();
+        }
+
+        public void Init(LevelData levelData)
+        {
+            _availableTiles.ForEach(tile => _tilePool.Release(tile));
+            _selectedTiles.ForEach(tile => _tilePool.Release(tile));
+        }
+
+        private Tile CreateTile()
+        {
+            var tile = Instantiate(tilePrefab, transform).GetComponent<Tile>();
+            tile.transform.SetParent(transform);
+            return tile;
+        }
+
+        private void GetTile(Tile tile)
+        {
+            tile.gameObject.SetActive(true);
+        }
+        
+        private void ReleaseTile(Tile tile)
+        {
+            tile.gameObject.SetActive(false);
+        }
+    }
+}

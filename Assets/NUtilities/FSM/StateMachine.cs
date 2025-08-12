@@ -36,7 +36,7 @@ namespace NUtilities.FSM
             ChangeState(transition.State, transition.Context);
         }
 
-        public void ChangeState(string name, Object context = null)
+        public void ChangeState(string name, object context = null)
         {
             if (!_states.TryGetValue(name, out var newState))
             {
@@ -53,6 +53,7 @@ namespace NUtilities.FSM
             _currentState?.Exit();
             _currentState = newState;
             _currentState.Enter(context);
+            _currentState.EnterAsync(context);
         }
         
         public void Update(float deltaTime)

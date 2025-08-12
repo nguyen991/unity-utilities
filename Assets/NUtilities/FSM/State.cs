@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace NUtilities.FSM
@@ -12,8 +13,13 @@ namespace NUtilities.FSM
             Name = name;
         }
 
-        public virtual void Enter(Object context)
+        public virtual void Enter(object context)
         {
+        }
+        
+        public virtual UniTask EnterAsync(object context)
+        {
+            return UniTask.CompletedTask;
         }
 
         public virtual void Update(float deltaTime)
@@ -24,8 +30,18 @@ namespace NUtilities.FSM
         {
         }
 
-        protected void SetTransition(string to, Object context)
+        protected void SetTransition(string to, object context = null, bool overrideExisting = false)
         {
+            if (string.IsNullOrEmpty(to))
+            {
+                Debug.LogError("Transition state cannot be null or empty.");
+                return;
+            }
+            if (_transition != null && !overrideExisting)
+            {
+                Debug.LogWarning($"Transition already set to {_transition.State}. Overriding with new transition to {to}.");
+                return;
+            }
             _transition = new TransitionState(to, context);
         }
 
@@ -40,9 +56,9 @@ namespace NUtilities.FSM
     public class TransitionState
     {
         public string State;
-        public Object Context;
+        public object Context;
         
-        public TransitionState(string state, Object context = null)
+        public TransitionState(string state, object context = null)
         {
             State = state;
             Context = context;
