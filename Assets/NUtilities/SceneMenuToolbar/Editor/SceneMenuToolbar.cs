@@ -23,81 +23,87 @@ namespace NUtilities.SceneMenuToolbar.Editor
             var data = GetData();
 
             // add header label
-            Add(new Label("Scene Toolbars")
-            {
-                style =
+            Add(
+                new Label("Scene Toolbars")
                 {
-                    unityFontStyleAndWeight = FontStyle.Bold,
-                    fontSize = 16,
-                    marginBottom = 8
+                    style =
+                    {
+                        unityFontStyleAndWeight = FontStyle.Bold,
+                        fontSize = 16,
+                        marginBottom = 8
+                    }
                 }
-            });
+            );
 
             // add spacing
             Spacing();
 
             // add text field for scene directory
-            var listView = new ListView(data.sceneDirectories, 20, () =>
-            {
-                var element = new VisualElement()
+            var listView = new ListView(
+                data.sceneDirectories,
+                20,
+                () =>
                 {
-                    style =
+                    var element = new VisualElement()
                     {
-                        flexDirection = FlexDirection.Row,
-                        flexGrow = 1,
-                        marginBottom = 2,
-                        marginTop = 2,
-                        marginLeft = 2,
-                        marginRight = 2,
-                        alignItems = Align.Center,
-                    }
-                };
+                        style =
+                        {
+                            flexDirection = FlexDirection.Row,
+                            flexGrow = 1,
+                            marginBottom = 2,
+                            marginTop = 2,
+                            marginLeft = 2,
+                            marginRight = 2,
+                            alignItems = Align.Center,
+                        }
+                    };
 
-                // add text field
-                var textField = new TextField()
+                    // add text field
+                    var textField = new TextField()
+                    {
+                        label = "Element",
+                        style = { flexGrow = 1, }
+                    };
+                    element.Add(textField);
+
+                    // add icon button
+                    var button = new Button()
+                    {
+                        style =
+                        {
+                            backgroundImage = new StyleBackground(
+                                EditorGUIUtility.IconContent("Folder Icon").image as Texture2D
+                            ),
+                            height = 20,
+                            width = 20,
+                        }
+                    };
+                    element.Add(button);
+
+                    return element;
+                },
+                (element, i) =>
                 {
-                    label = "Element",
-                    style =
+                    // text field
+                    var textField = element.Q<TextField>();
+                    textField.label = "Element " + (i + 1);
+                    textField.value = data.sceneDirectories[i];
+                    textField.RegisterValueChangedCallback(evt =>
                     {
-                        flexGrow = 1,
-                    }
-                };
-                element.Add(textField);
+                        while (data.sceneDirectories.Count <= i)
+                        {
+                            data.sceneDirectories.Add(string.Empty);
+                        }
+                        data.sceneDirectories[i] = evt.newValue;
+                        EditorUtility.SetDirty(data);
+                    });
 
-                // add icon button
-                var button = new Button()
-                {
-                    style =
-                    {
-                        backgroundImage = new StyleBackground(EditorGUIUtility.IconContent("Folder Icon").image as Texture2D),
-                        height = 20,
-                        width = 20,
-                    }
-                };
-                element.Add(button);
-
-                return element;
-            }, (element, i) =>
-            {
-                // text field
-                var textField = element.Q<TextField>();
-                textField.label = "Element " + (i + 1);
-                textField.value = data.sceneDirectories[i];
-                textField.RegisterValueChangedCallback(evt =>
-                {
-                    while (data.sceneDirectories.Count <= i)
-                    {
-                        data.sceneDirectories.Add(string.Empty);
-                    }
-                    data.sceneDirectories[i] = evt.newValue;
-                    EditorUtility.SetDirty(data);
-                });
-
-                // icon button to open folder picker
-                var button = element.Q<Button>();
-                button.clickable = null;
-                button.clicked += () => PickSceneDirectoryField(data, i);
-            })
+                    // icon button to open folder picker
+                    var button = element.Q<Button>();
+                    button.clickable = null;
+                    button.clicked += () => PickSceneDirectoryField(data, i);
+                }
+            )
             {
                 headerTitle = "Scene Directories",
                 selectionType = SelectionType.Single,
@@ -111,13 +117,13 @@ namespace NUtilities.SceneMenuToolbar.Editor
             {
                 Refresh();
             };
-            
+
             Add(listView);
             Spacing();
-            
+
             // get all scenes in the directory
             var scenes = GetScenes(data.sceneDirectories);
-            
+
             // add dropdown for quick open scenes
             var openScenes = new List<string>(scenes);
             openScenes.Insert(0, "---");
@@ -133,9 +139,13 @@ namespace NUtilities.SceneMenuToolbar.Editor
             });
             Add(sceneDropdown);
             Spacing();
-            
+
             // add dropdown for select boost scene
-            var boostSceneDropdown = new DropdownField("Boost Scene", scenes, scenes.IndexOf(data.sceneBoostPath));
+            var boostSceneDropdown = new DropdownField(
+                "Boost Scene",
+                scenes,
+                scenes.IndexOf(data.sceneBoostPath)
+            );
             boostSceneDropdown.RegisterValueChangedCallback(evt =>
             {
                 data.sceneBoostPath = evt.newValue;
@@ -143,61 +153,50 @@ namespace NUtilities.SceneMenuToolbar.Editor
             });
             Add(boostSceneDropdown);
             Spacing();
-            
+
             // add horizontal line
-            Add(new VisualElement
-            {
-                style =
+            Add(
+                new VisualElement
                 {
-                    height = 1,
-                    backgroundColor = Color.gray,
-                    marginTop = 8,
-                    marginBottom = 8
+                    style =
+                    {
+                        height = 1,
+                        backgroundColor = Color.gray,
+                        marginTop = 8,
+                        marginBottom = 8
+                    }
                 }
-            });
-            
+            );
+
             // add boost button
-            Add(new Button(() =>
-            {
-                // check if boost scene path is set
-                if (string.IsNullOrEmpty(data.sceneBoostPath) || EditorApplication.isPlaying)
-                    return;
-                
-                // open the boost scene
-                if (System.IO.File.Exists(data.sceneBoostPath) && EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+            Add(
+                new Button(() => BoostScene())
                 {
-                    EditorPrefs.SetString($"scene_boost", SceneManager.GetActiveScene().path);
-                    EditorSceneManager.OpenScene(data.sceneBoostPath);
-                    EditorApplication.isPlaying = true;
+                    text = "Boost Scene",
+                    style =
+                    {
+                        height = 25,
+                        flexGrow = 1,
+                        backgroundColor = Color.green,
+                        color = Color.black
+                    }
                 }
-                else
-                {
-                    Debug.LogWarning($"Scene not found: {data.sceneBoostPath}");
-                }
-            })
-            {
-                text = "Boost Scene",
-                style =
-                {
-                    height = 25,
-                    flexGrow = 1,
-                    backgroundColor = Color.green,
-                    color = Color.black
-                }
-            });
-            
+            );
+
             // add refresh button
-            Add(new Button(Refresh)
-            {
-                text = "Refresh",
-                style =
+            Add(
+                new Button(Refresh)
                 {
-                    height = 25,
-                    flexGrow = 1,
-                    backgroundColor = Color.gray,
-                    color = Color.white
+                    text = "Refresh",
+                    style =
+                    {
+                        height = 25,
+                        flexGrow = 1,
+                        backgroundColor = Color.gray,
+                        color = Color.white
+                    }
                 }
-            });
+            );
         }
 
         private void Refresh()
@@ -205,7 +204,7 @@ namespace NUtilities.SceneMenuToolbar.Editor
             Clear();
             InitializeElement();
         }
-        
+
         private void PickSceneDirectoryField(SceneMenuToolbarObject data, int index)
         {
             var path = EditorUtility.OpenFolderPanel("Select Scene Directory", "Assets", "");
@@ -217,20 +216,14 @@ namespace NUtilities.SceneMenuToolbar.Editor
                 Refresh();
             }
         }
-        
+
         private void Spacing(float height = 8f)
         {
-            Add(new VisualElement
-            {
-                style =
-                {
-                    height = height,
-                    flexGrow = 1
-                }
-            });
+            Add(new VisualElement { style = { height = height, flexGrow = 1 } });
         }
 
         private static readonly List<string> EmptyScenes = new List<string>();
+
         private List<string> GetScenes(List<string> paths)
         {
             if (paths.Count == 0)
@@ -239,13 +232,14 @@ namespace NUtilities.SceneMenuToolbar.Editor
                 return EmptyScenes;
             }
 
-            return AssetDatabase.FindAssets("t:Scene", paths.Where(p => !string.IsNullOrEmpty(p)).ToArray())
+            return AssetDatabase
+                .FindAssets("t:Scene", paths.Where(p => !string.IsNullOrEmpty(p)).ToArray())
                 .Distinct()
                 .Select(AssetDatabase.GUIDToAssetPath)
                 .ToList();
         }
-        
-        private SceneMenuToolbarObject GetData()
+
+        private static SceneMenuToolbarObject GetData()
         {
             var filters = AssetDatabase.FindAssets("t:SceneMenuToolbarObject");
             if (filters.Length > 0)
@@ -258,15 +252,46 @@ namespace NUtilities.SceneMenuToolbar.Editor
                     return existingObject;
                 }
             }
-            
+
             // create a new instance if none exists
             var newObject = ScriptableObject.CreateInstance<SceneMenuToolbarObject>();
-            AssetDatabase.CreateAsset(newObject, "Assets/SceneMenuToolbar/SceneMenuToolbarObject.asset");
+            AssetDatabase.CreateAsset(
+                newObject,
+                "Assets/SceneMenuToolbar/SceneMenuToolbarObject.asset"
+            );
             AssetDatabase.SaveAssets();
             return newObject;
         }
+
+        public static void BoostScene()
+        {
+            // get the data from SceneMenuToolbarObject
+            var data = GetData();
+
+            // check if boost scene path is set
+            if (string.IsNullOrEmpty(data.sceneBoostPath) || EditorApplication.isPlaying)
+            {
+                Debug.LogWarning("Boost scene path is not set or already in play mode.");
+                return;
+            }
+
+            // open the boost scene
+            if (
+                System.IO.File.Exists(data.sceneBoostPath)
+                && EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()
+            )
+            {
+                EditorPrefs.SetString($"scene_boost", SceneManager.GetActiveScene().path);
+                EditorSceneManager.OpenScene(data.sceneBoostPath);
+                EditorApplication.isPlaying = true;
+            }
+            else
+            {
+                Debug.LogWarning($"Scene not found: {data.sceneBoostPath}");
+            }
+        }
     }
-    
+
     [InitializeOnLoad]
     public static class SceneMenuToolbarExtender
     {
@@ -277,7 +302,10 @@ namespace NUtilities.SceneMenuToolbar.Editor
 
         private static void OnPlayModeStateChanged(PlayModeStateChange state)
         {
-            if (state == PlayModeStateChange.EnteredEditMode && EditorPrefs.GetString("scene_boost") != string.Empty)
+            if (
+                state == PlayModeStateChange.EnteredEditMode
+                && EditorPrefs.GetString("scene_boost") != string.Empty
+            )
             {
                 var scene = EditorPrefs.GetString("scene_boost");
                 EditorSceneManager.OpenScene(scene);
@@ -286,4 +314,3 @@ namespace NUtilities.SceneMenuToolbar.Editor
         }
     }
 }
-

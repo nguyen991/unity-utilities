@@ -48,5 +48,6 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
+  loadingViewPrefab: {fileID: 3358183672699124543, guid: 34f8c81d550682d429083bcc9533fa7f, type: 3}
   popup: {fileID: 11400000, guid: 36722e58644d14b52b6bdea52d4eb10e, type: 2}
-  preloadPopups: 1
+  saveSO: {fileID: 11400000, guid: c194a527ffcf40646a7c2335b50d1052, type: 2}

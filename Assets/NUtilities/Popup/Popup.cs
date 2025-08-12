@@ -3,6 +3,7 @@ using LitMotion.Animation;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using VContainer;
 
 namespace NUtilities.Popup
 {
@@ -12,33 +13,35 @@ namespace NUtilities.Popup
         [Header("Content")]
         public Image backgroundImage;
         public CanvasGroup canvasGroup;
-        
+
         [Header("Animator")]
         public Animator animator;
         public string animatorOpenState = "Open";
         public string animatorCloseState = "Close";
-        
+
         [Header("LitMotion")]
         public LitMotionAnimation openAnimation;
         public LitMotionAnimation closeAnimation;
-        
+
         [Header("Events")]
         public UnityEvent<object> OnOpen;
         public UnityEvent<object> OnHide;
-        
+
         protected Canvas canvas;
         protected GraphicRaycaster raycaster;
         protected UniTaskCompletionSource<object> onCompletedTask;
-        
+
         private int _openStateHash;
         private int _closeStateHash;
+
+        public PopupService PopupService { get; private set; } = null;
 
         protected virtual void Awake()
         {
             // cache animator trigger hashes
             _openStateHash = Animator.StringToHash(animatorOpenState);
             _closeStateHash = Animator.StringToHash(animatorCloseState);
-            
+
             // get components
             canvas = GetComponent<Canvas>();
             raycaster = GetComponent<GraphicRaycaster>();
@@ -47,7 +50,7 @@ namespace NUtilities.Popup
             {
                 animator.updateMode = AnimatorUpdateMode.UnscaledTime;
             }
-            
+
             // disable canvas and raycaster by default
             canvas.enabled = false;
             raycaster.enabled = false;
@@ -68,17 +71,28 @@ namespace NUtilities.Popup
                 completeTask?.TrySetResult(null);
                 return;
             }
-            
+
             // invoke the onOpen event
             OnOpen?.Invoke(dataInput);
-            gameObject.SendMessage("OnOpenPopup", dataInput, SendMessageOptions.DontRequireReceiver);
-            
+            gameObject.SendMessage(
+                "OnOpenPopup",
+                dataInput,
+                SendMessageOptions.DontRequireReceiver
+            );
+
             // enable canvas and raycaster
-            canvas.enabled = true;
-            raycaster.enabled = true;
-            onCompletedTask = completeTask;
-            if (canvasGroup != null) canvasGroup.interactable = false;
-            
+            UniTask
+                .NextFrame()
+                .ContinueWith(() =>
+                {
+                    canvas.enabled = true;
+                    raycaster.enabled = true;
+                    onCompletedTask = completeTask;
+                    if (canvasGroup != null)
+                        canvasGroup.interactable = false;
+                })
+                .Forget();
+
             // play animation
             if (animator != null)
             {
@@ -106,10 +120,11 @@ namespace NUtilities.Popup
             OnHide?.Invoke(result);
             gameObject.SendMessage("OnHidePopup", result, SendMessageOptions.DontRequireReceiver);
             onCompletedTask?.TrySetResult(result);
-            
+
             // disable canvasGroup
-            if (canvasGroup != null) canvasGroup.interactable = false;
-            
+            if (canvasGroup != null)
+                canvasGroup.interactable = false;
+
             // play animation
             if (animator != null)
             {
@@ -127,18 +142,24 @@ namespace NUtilities.Popup
 
         public void HideCompleted()
         {
-            Debug.Log("Popup Hide Completed: " + gameObject.name);
             canvas.enabled = false;
             raycaster.enabled = false;
-            
-            if (openAnimation != null) openAnimation.Stop();
-            if (closeAnimation != null) UniTask.NextFrame().ContinueWith(() => closeAnimation.Stop()).Forget();
+            if (closeAnimation != null)
+                UniTask.NextFrame().ContinueWith(() => closeAnimation.Stop()).Forget();
         }
 
         public void ShowCompleted()
         {
-            Debug.Log("Popup Show Completed: " + gameObject.name);
-            if (canvasGroup != null) canvasGroup.interactable = true;
+            if (openAnimation != null)
+                UniTask.NextFrame().ContinueWith(() => openAnimation.Stop()).Forget();
+            if (canvasGroup != null)
+                canvasGroup.interactable = true;
+        }
+
+        [Inject]
+        public void Inject(PopupService popupService)
+        {
+            PopupService = popupService;
         }
     }
 }

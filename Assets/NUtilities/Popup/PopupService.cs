@@ -1,36 +1,38 @@
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using VContainer;
 using VContainer.Unity;
 
 namespace NUtilities.Popup
 {
-    public class PopupService : IStartable
+    public class PopupService : IInitializable
     {
         private readonly PopupSO _config;
         private readonly Dictionary<string, Popup> _popups;
+        private readonly IObjectResolver _container;
         private Transform _popupParent;
-        
-        public PopupService(PopupSO config)
+
+        public PopupService(PopupSO config, IObjectResolver container)
         {
             _config = config;
+            _container = container;
             _popups = new Dictionary<string, Popup>();
         }
-        
-        public void Start()
+
+        public void Initialize()
         {
             // create popup parent
             if (_config.canvasGroup != null)
             {
-                _popupParent = GameObject.Instantiate(_config.canvasGroup).transform;
-                GameObject.DontDestroyOnLoad(_popupParent.gameObject);
+                _popupParent = Object.Instantiate(_config.canvasGroup).transform;
+                Object.DontDestroyOnLoad(_popupParent.gameObject);
             }
 
             // reload popups
             Reload();
         }
-        
+
         public void Reload()
         {
             foreach (var popupConfig in _config.popups)
@@ -39,13 +41,13 @@ namespace NUtilities.Popup
                 {
                     continue;
                 }
-                
+
                 if (_popups.ContainsKey(popupConfig.name))
                 {
                     Debug.LogWarningFormat("Popup {0} already exists.", popupConfig.name);
                     continue;
                 }
-                
+
                 // instantiate the popup prefab
                 CreatePopup(popupConfig);
             }
@@ -58,9 +60,9 @@ namespace NUtilities.Popup
                 Debug.LogWarningFormat("Popup {0} already exists.", config.name);
                 return _popups[config.name];
             }
-                
+
             // instantiate the popup prefab
-            var popup = GameObject.Instantiate(config.prefab).GetComponent<Popup>();
+            var popup = _container.Instantiate(config.prefab).GetComponent<Popup>();
             _popups.Add(config.name, popup);
 
             // Set the parent of the popup
@@ -68,10 +70,10 @@ namespace NUtilities.Popup
             {
                 popup.transform.SetParent(_popupParent, false);
             }
-            
+
             return popup;
         }
-        
+
         public void Show(string popupType, object dataInput = null)
         {
             // Check if the popup type exists in the dictionary
@@ -85,11 +87,11 @@ namespace NUtilities.Popup
                 }
                 popup = CreatePopup(popupConfig);
             }
-            
+
             // Show the popup with the provided data input
             popup.Show(dataInput);
         }
-        
+
         public UniTask<object> ShowAsync(string popupType, object dataInput = null)
         {
             // Check if the popup type exists in the dictionary

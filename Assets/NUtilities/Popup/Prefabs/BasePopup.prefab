@@ -99,8 +99,8 @@ MonoBehaviour:
           cancelOnError: 0
           skipValuesDuringDelay: 0
           immediateBind: 0
-          schedulerType: 0
-          additionalSettings: 0
+          schedulerType: 5
+          additionalSettings: 1
         relative: 0
     - rid: 4710377244533194954
       type: {class: CanvasGroupAlphaAnimation, ns: LitMotion.Animation.Components, asm: LitMotion.Animation}
@@ -144,8 +144,8 @@ MonoBehaviour:
           cancelOnError: 0
           skipValuesDuringDelay: 0
           immediateBind: 0
-          schedulerType: 0
-          additionalSettings: 0
+          schedulerType: 5
+          additionalSettings: 1
         relative: 0
     - rid: 4710377244533194955
       type: {class: ImageColorAlphaAnimation, ns: LitMotion.Animation.Components, asm: LitMotion.Animation}
@@ -189,8 +189,8 @@ MonoBehaviour:
           cancelOnError: 0
           skipValuesDuringDelay: 0
           immediateBind: 0
-          schedulerType: 0
-          additionalSettings: 0
+          schedulerType: 5
+          additionalSettings: 1
         relative: 0
 --- !u!1 &1230115164326763228
 GameObject:
@@ -516,8 +516,8 @@ MonoBehaviour:
           cancelOnError: 0
           skipValuesDuringDelay: 0
           immediateBind: 0
-          schedulerType: 0
-          additionalSettings: 0
+          schedulerType: 5
+          additionalSettings: 1
         relative: 0
     - rid: 4710377244533194954
       type: {class: CanvasGroupAlphaAnimation, ns: LitMotion.Animation.Components, asm: LitMotion.Animation}
@@ -561,8 +561,8 @@ MonoBehaviour:
           cancelOnError: 0
           skipValuesDuringDelay: 0
           immediateBind: 0
-          schedulerType: 0
-          additionalSettings: 0
+          schedulerType: 5
+          additionalSettings: 1
         relative: 0
     - rid: 4710377244533194955
       type: {class: ImageColorAlphaAnimation, ns: LitMotion.Animation.Components, asm: LitMotion.Animation}
@@ -606,8 +606,8 @@ MonoBehaviour:
           cancelOnError: 0
           skipValuesDuringDelay: 0
           immediateBind: 0
-          schedulerType: 0
-          additionalSettings: 0
+          schedulerType: 5
+          additionalSettings: 1
         relative: 0
 --- !u!1 &5250864135473128673
 GameObject:
