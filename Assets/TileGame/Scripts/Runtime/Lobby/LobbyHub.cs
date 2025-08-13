@@ -31,7 +31,7 @@ namespace TileGame.Lobby
 
         private void OnStartButtonClicked()
         {
-            _loadingService.ReplaceScene("Game", new StartGameModel() { level = 1 }).Forget();
+            _loadingService.ReplaceScene("Game", new StartGameArgs() { level = 1 }).Forget();
         }
     }
 }

@@ -17,9 +17,9 @@ namespace TileGame.Game.State
         public override async UniTask EnterAsync(object context)
         {
             // get the start game arguments
-            if (context is not StartGameModel args)
+            if (context is not StartGameArgs args)
             {
-                args = new StartGameModel() { level = 1 };
+                args = new StartGameArgs() { level = 1 };
                 Log.D("No start game arguments provided, defaulting to level 1.");
             }
             

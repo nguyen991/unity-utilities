@@ -14,10 +14,9 @@ namespace TileGame.Game
         
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.Register<GSInit>(Lifetime.Transient);
-            builder.Register<GSPlay>(Lifetime.Transient);
-            builder.Register<GSPause>(Lifetime.Transient);
-            
+            builder.Register<GSInit>(Lifetime.Transient).AsSelf();
+            builder.Register<GSPlay>(Lifetime.Transient).AsSelf();
+            builder.Register<GSPause>(Lifetime.Transient).AsSelf();
             builder.RegisterEntryPoint<GameManager>().WithParameter("gameController", gameController);
         }
     }

@@ -17,9 +17,9 @@ namespace TileGame.Game.Manager
         private readonly LoadingService _loadingService;
         private readonly GameController _gameController;
         
-        private StartGameModel _startGameArgs;
+        private StartGameArgs _startGameArgs;
         
-        public GameManager(IObjectResolver resolver, LoadingService loadingService, GameController gameController, StartGameModel startGameArgs, LevelSystem levelSystem)
+        public GameManager(IObjectResolver resolver, LoadingService loadingService, GameController gameController, StartGameArgs startGameArgs, LevelSystem levelSystem)
         {
             _loadingService = loadingService;
             _gameController = gameController;
@@ -39,11 +39,11 @@ namespace TileGame.Game.Manager
             // wait for the next frame to ensure all initializations are complete
             await UniTask.NextFrame(cancellation);
             
-            // hide loading screen
-            _loadingService.Hide();
-            
             // start state machine
             _stateMachine.ChangeState(GameConst.State.Init, _startGameArgs);
+            
+            // hide loading screen
+            _loadingService.Hide();
         }
         
         public void Tick()
