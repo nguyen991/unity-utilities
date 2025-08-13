@@ -3,9 +3,11 @@ using UnityEngine;
 
 namespace NUtilities.FSM
 {
-    public class State
+    public class State<T> where T : class
     {
         public string Name { get; private set; }
+        public StateMachine<T> StateMachine { get; set; }
+        
         private TransitionState _transition;
         
         public State(string name)
@@ -62,6 +64,13 @@ namespace NUtilities.FSM
         {
             State = state;
             Context = context;
+        }
+    }
+    
+    public class GameObjectState : State<GameObject>
+    {
+        protected GameObjectState(string name) : base(name)
+        {
         }
     }
 }

@@ -27,7 +27,7 @@ public class SOneScript : MonoBehaviour
     {
         _popupService = popupService;
         _loadingService = loadingService;
-        _loadingService.HideLoadingView();
+        _loadingService.Hide();
         _saveSystem = saveSystem;
     }
 

@@ -20,7 +20,7 @@ public class STwoScript : MonoBehaviour
         Debug.Log(
             $"SceneContext: Level = {sceneContext.level}, GameMode = {sceneContext.gameMode}"
         );
-        _loadingService.HideLoadingView();
+        _loadingService.Hide();
     }
 
     public void ReplaceScene()

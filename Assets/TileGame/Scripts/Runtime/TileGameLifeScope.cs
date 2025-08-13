@@ -1,18 +1,21 @@
 using System;
-using NUtilities.Popup;
 using TileGame.Level;
+using TileGame.User;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
 namespace TileGame.Game
 {
-    public class TileGameLifeScope : LifetimeScope
+    public class TileGameLifeScope : MonoBehaviour
     {
-        protected override void Configure(IContainerBuilder builder)
+        public void Configure(IContainerBuilder builder)
         {
-            // register level system
-            builder.Register<LevelSystem>(Lifetime.Singleton).AsSelf();
+            builder.UseEntryPoints(Lifetime.Singleton, entry =>
+            {
+                entry.Add<LevelSystem>().AsSelf();
+                entry.Add<UserSystem>().AsSelf();
+            });
         }
     }
 }

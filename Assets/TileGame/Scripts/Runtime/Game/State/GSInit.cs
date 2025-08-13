@@ -1,46 +1,34 @@
 using Cysharp.Threading.Tasks;
 using NUtilities.Helper;
-using TileGame.Game.Controller;
+using TileGame.Game.Model;
 using TileGame.Level;
-using UnityEngine;
 
 namespace TileGame.Game.State
 {
-    public class GSInit : NUtilities.FSM.State
+    public class GSInit : GameFSMState
     {
         private readonly LevelSystem _levelSystem;
-        private readonly GridManager _gridManager;
         
-        public GSInit(LevelSystem levelSystem, GridManager gridManager) : base(GameConst.State.Init)
+        public GSInit(LevelSystem levelSystem) : base(GameConst.State.Init)
         {
             _levelSystem = levelSystem;
-            _gridManager = gridManager;
         }
 
         public override async UniTask EnterAsync(object context)
         {
-            if (context is not GSInitContext initContext)
+            // get the start game arguments
+            if (context is not StartGameModel args)
             {
-                Log.E("GSInitContext is null. Cannot initialize game state.");
-                return;
+                args = new StartGameModel() { level = 1 };
+                Log.D("No start game arguments provided, defaulting to level 1.");
             }
             
             // load the level
-            var level = await _levelSystem.LoadLevel(initContext.level);
-            _gridManager.Init(level);
+            var level = await _levelSystem.LoadLevel(args.level);
+            StateMachine.Owner.gridController.Init(level);
             
             // change to next state
             SetTransition(GameConst.State.Play);
-        }
-        
-        /**
-         *  Context for the GSInit state.
-         *  Contains information about the level to be initialized.
-         *  This can be extended to include more initialization parameters as needed.
-         */
-        public class GSInitContext
-        {
-            public int level;
         }
     }
 }

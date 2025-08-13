@@ -1,11 +1,13 @@
+using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using NUtilities.Helper.Addressable;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using VContainer;
 
-namespace TileGame.Load
+namespace TileGame.Loader
 {
     public class GameLoader : MonoBehaviour
     {
@@ -14,21 +16,27 @@ namespace TileGame.Load
         public TextMeshProUGUI progressText;
         
         public string nextSceneName = "Lobby";
-        
+
         private async UniTaskVoid Start()
         {
-            //TODO: load other plugins here
-
             // Download all assets
-            await Downloader.Download(downloadLabels, (current, total) =>
+            if (downloadLabels.Count > 0)
             {
-                if (progressText != null)
+                await Downloader.Download(downloadLabels, (current, total) =>
                 {
-                    var progress = (float)current / total;
-                    progressText.text = $"Downloading: {progress:P0}%";
-                }
-            });
+                    if (progressText != null)
+                    {
+                        var progress = (float)current / total;
+                        progressText.text = $"Downloading: {progress:P0}%";
+                    }
+                });
+            }
             
+            //TODO: load other plugins here
+            
+            // next frame
+            await UniTask.NextFrame();
+
             // Replace the scene
             SceneManager.LoadScene(nextSceneName);
         }

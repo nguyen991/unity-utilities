@@ -65,7 +65,7 @@ namespace NUtilities.Loading
             }
         }
 
-        public void HideLoadingView()
+        public void Hide()
         {
             _view.allowHide = true;
         }

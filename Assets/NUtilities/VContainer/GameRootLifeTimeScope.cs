@@ -3,6 +3,7 @@ using NUtilities.Loading;
 using NUtilities.Popup;
 using NUtilities.Save;
 using UnityEngine;
+using UnityEngine.Events;
 using VContainer;
 using VContainer.Unity;
 
@@ -18,27 +19,36 @@ namespace NUtilities.VContainer
 
         [Header("Save System")]
         public SaveSO saveSO;
+        
+        [Header("Other Builder Configurations")]
+        public UnityEvent<IContainerBuilder>[] buildEvents;
 
         protected override void Configure(IContainerBuilder builder)
         {
             // Register entries services
             builder.UseEntryPoints(
                 Lifetime.Singleton,
-                entryPoints =>
+                entry =>
                 {
                     // save system
-                    entryPoints.Add<SaveService>().WithParameter("config", saveSO).AsSelf();
+                    entry.Add<SaveService>().WithParameter("config", saveSO).AsSelf();
 
                     // popup service
-                    entryPoints.Add<PopupService>().WithParameter("config", popup).AsSelf();
+                    entry.Add<PopupService>().WithParameter("config", popup).AsSelf();
 
                     // loading service
-                    entryPoints
+                    entry
                         .Add<LoadingService>()
                         .WithParameter("prefab", loadingViewPrefab)
                         .AsSelf();
                 }
             );
+
+            // Register other scopes
+            foreach (var builFunc in buildEvents)
+            {
+                builFunc?.Invoke(builder);
+            }
         }
     }
 }

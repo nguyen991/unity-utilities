@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace NUtilities.FSM
 {
-    public class ActionState : State
+    public class ActionState<T> : State<T> where T : class
     {
         private readonly List<Action<float>> _actions;
         

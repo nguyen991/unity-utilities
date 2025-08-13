@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 633830840515449488}
   - component: {fileID: -6426591520756088374}
-  - component: {fileID: -8948821712867810990}
+  - component: {fileID: 8557035282253991661}
   m_Layer: 0
   m_Name: GameRootLifeTimeScope
   m_TagString: Untagged
@@ -52,7 +52,22 @@ MonoBehaviour:
   loadingViewPrefab: {fileID: 3358183672699124543, guid: 34f8c81d550682d429083bcc9533fa7f, type: 3}
   popup: {fileID: 11400000, guid: 36722e58644d14b52b6bdea52d4eb10e, type: 2}
   saveSO: {fileID: 11400000, guid: c194a527ffcf40646a7c2335b50d1052, type: 2}
---- !u!114 &-8948821712867810990
+  buildEvents:
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8557035282253991661}
+        m_TargetAssemblyTypeName: TileGame.Game.TileGameLifeScope, Assembly-CSharp
+        m_MethodName: Configure
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &8557035282253991661
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -64,7 +79,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab895e01befaf434f89ad0e2c8bc5e91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentReference:
-    TypeName: 
-  autoRun: 1
-  autoInjectGameObjects: []

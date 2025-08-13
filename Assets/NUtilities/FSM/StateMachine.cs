@@ -3,21 +3,24 @@ using UnityEngine;
 
 namespace NUtilities.FSM
 {
-    public class StateMachine
+    public class StateMachine<T> where T : class
     {
-        private readonly Dictionary<string, State> _states;
-        private State _currentState;
+        private readonly Dictionary<string, State<T>> _states;
+        private State<T> _currentState;
         private TransitionState _currentTransition;
         
-        public StateMachine()
+        public T Owner { get; private set; }
+        
+        public StateMachine(T owner)
         {
-            _states = new Dictionary<string, State>();
+            Owner = owner;
+            _states = new Dictionary<string, State<T>>();
             _currentState = null;
         }
         
         public string CurrentState => _currentState?.Name;
 
-        public void AddState(State state)
+        public void AddState(State<T> state)
         {
             if (state == null)
             {
@@ -29,6 +32,7 @@ namespace NUtilities.FSM
             {
                 Debug.LogWarning($"State {state.Name} already exists in the state machine.");
             }
+            state.StateMachine = this;
         }
 
         public void ChangeState(TransitionState transition)
@@ -72,6 +76,18 @@ namespace NUtilities.FSM
         public void Destroy()
         {
             _currentState?.Exit();
+        }
+    }
+
+    /**
+     *  GameObjectStateMachine
+     *  A specialized state machine for GameObjects.
+     *  It inherits from the generic StateMachine class and uses GameObject as the owner type
+     */
+    public class GameObjectStateMachine : StateMachine<GameObject>
+    {
+        public GameObjectStateMachine(GameObject owner) : base(owner)
+        {
         }
     }
 }

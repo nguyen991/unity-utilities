@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneDirectories:
   - Assets/Scenes
-  sceneBoostPath: Assets/Scenes/S1.unity
+  - Assets/TileGame/Scenes
+  sceneBoostPath: Assets/TileGame/Scenes/Load.unity

@@ -6,7 +6,7 @@ using UnityEngine.Pool;
 
 namespace TileGame.Game.Controller
 {
-    public class GridManager : MonoBehaviour
+    public class GridController : MonoBehaviour
     {
         [SerializeField] private GameObject tilePrefab;
         
