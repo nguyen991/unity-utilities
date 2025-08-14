@@ -14,13 +14,13 @@ namespace TileGame.Lobby
     {
         public Button startButton;
         
-        private LoadingService _loadingService;
+        private LoadingSystem _loadingSystem;
         private UserSystem _userSystem;
 
         [Inject]
-        public void Inject(LoadingService loadingService, UserSystem userSystem)
+        public void Inject(LoadingSystem loadingSystem, UserSystem userSystem)
         {
-            _loadingService = loadingService;
+            _loadingSystem = loadingSystem;
             _userSystem = userSystem;
         }
 
@@ -31,7 +31,7 @@ namespace TileGame.Lobby
 
         private void OnStartButtonClicked()
         {
-            _loadingService.ReplaceScene("Game", new StartGameArgs() { level = 1 }).Forget();
+            _loadingSystem.ReplaceScene("Game", new StartGameArgs() { level = 1 }).Forget();
         }
     }
 }

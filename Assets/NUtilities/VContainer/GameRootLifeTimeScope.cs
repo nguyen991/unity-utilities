@@ -1,5 +1,6 @@
 using System;
 using NUtilities.Loading;
+using NUtilities.Pool;
 using NUtilities.Popup;
 using NUtilities.Save;
 using UnityEngine;
@@ -20,9 +21,9 @@ namespace NUtilities.VContainer
         [Header("Save System")]
         public SaveSO saveSO;
         
-        [Header("Other Builder Configurations")]
-        public UnityEvent<IContainerBuilder>[] buildEvents;
-
+        [Header("Pool System")]
+        public PoolSO poolSO;
+        
         protected override void Configure(IContainerBuilder builder)
         {
             // Register entries services
@@ -31,24 +32,21 @@ namespace NUtilities.VContainer
                 entry =>
                 {
                     // save system
-                    entry.Add<SaveService>().WithParameter("config", saveSO).AsSelf();
+                    entry.Add<SaveSystem>().WithParameter("config", saveSO).AsSelf();
 
                     // popup service
-                    entry.Add<PopupService>().WithParameter("config", popup).AsSelf();
+                    entry.Add<PopupSystem>().WithParameter("config", popup).AsSelf();
 
                     // loading service
                     entry
-                        .Add<LoadingService>()
+                        .Add<LoadingSystem>()
                         .WithParameter("prefab", loadingViewPrefab)
                         .AsSelf();
+                    
+                    // pool system
+                    entry.Add<PoolSystem>().WithParameter("config", poolSO).AsSelf();
                 }
             );
-
-            // Register other scopes
-            foreach (var builFunc in buildEvents)
-            {
-                builFunc?.Invoke(builder);
-            }
         }
     }
 }

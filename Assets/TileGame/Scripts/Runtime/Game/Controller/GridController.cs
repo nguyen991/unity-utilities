@@ -1,9 +1,10 @@
 using System;
-using System.Collections.Generic;
+using NUtilities.Pool;
+using TileGame.Game.Manager;
 using TileGame.Level;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Pool;
+using VContainer;
 
 namespace TileGame.Game.Controller
 {
@@ -11,56 +12,38 @@ namespace TileGame.Game.Controller
     {
         [SerializeField] private GameObject tilePrefab;
         [SerializeField] private Vector3 tileSize;
+        [SerializeField] private Transform container;
         
         public UnityAction<Tile> OnTileSelectedEvent;
         
-        private IObjectPool<Tile> _tilePool;
-        private List<Tile> _availableTiles;
-        private List<Tile> _selectedTiles;
+        private GameManager _gameManager;
+        private PoolSystem _poolSystem;
 
-        private void Awake()
+        [Inject]
+        public void Inject(GameManager gameManager, PoolSystem poolSystem)
         {
-            _tilePool = new ObjectPool<Tile>(CreateTile, actionOnGet: GetTile, actionOnRelease: ReleaseTile);
-            _availableTiles = new List<Tile>();
-            _selectedTiles = new List<Tile>();
+            _gameManager = gameManager;
+            _poolSystem = poolSystem;
         }
-
+        
         public void Init(LevelData levelData)
         {
-            _availableTiles.ForEach(tile => _tilePool.Release(tile));
-            _selectedTiles.ForEach(tile => _tilePool.Release(tile));
             levelData.layers.ForEach(layer =>
             {
                 layer.stones.ForEach(tilePos =>
                 {
-                    var tile = _tilePool.Get();
-                    tile.transform.localPosition = tilePos;
+                    var tile = _poolSystem.Get(tilePrefab, container).GetComponent<Tile>();
+                    tile.OnTileSelected = OnSelectedTile;
+                    tile.transform.localPosition = new Vector3(tilePos.x * tileSize.x, tilePos.y * tileSize.y, layer.index * tileSize.z);
+                    tile.SetData(0, layer.index, tilePos);
+                    _gameManager.GameModel.tiles.Add(tile);
                 });
             });
-        }
-
-        private Tile CreateTile()
-        {
-            var tile = Instantiate(tilePrefab, transform).GetComponent<Tile>();
-            tile.transform.SetParent(transform);
-            tile.OnTileSelected = OnSelectedTile;
-            return tile;
         }
 
         private void OnSelectedTile(Tile tile)
         {
             OnTileSelectedEvent.Invoke(tile);
-        }
-
-        private void GetTile(Tile tile)
-        {
-            tile.transform.SetParent(transform);
-            tile.gameObject.SetActive(true);
-        }
-        
-        private void ReleaseTile(Tile tile)
-        {
-            tile.gameObject.SetActive(false);
         }
     }
 }

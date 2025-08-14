@@ -4,6 +4,7 @@ namespace TileGame.Game.Controller
 {
     public class GameController : MonoBehaviour
     {
-        public GridController gridController;
+        public GridController grid;
+        public TileHold hold;
     }
 }

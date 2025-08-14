@@ -7,9 +7,9 @@ using VContainer.Unity;
 
 namespace TileGame.Game
 {
-    public class TileGameLifeScope : MonoBehaviour
+    public class TileGameLifeScope : LifetimeScope
     {
-        public void Configure(IContainerBuilder builder)
+        protected override void Configure(IContainerBuilder builder)
         {
             builder.UseEntryPoints(Lifetime.Singleton, entry =>
             {

@@ -5,7 +5,7 @@ using VContainer.Unity;
 
 namespace NUtilities.Save
 {
-    public class SaveService : IInitializable
+    public class SaveSystem : IInitializable
     {
         private readonly IFileStorage _fileStorage;
         private readonly ISaveType _saveType;
@@ -14,7 +14,7 @@ namespace NUtilities.Save
 
         private Dictionary<string, object> _registeredModels;
 
-        public SaveService(SaveSO config, IObjectResolver resolver)
+        public SaveSystem(SaveSO config, IObjectResolver resolver)
         {
             _resolver = resolver;
             _registeredModels = new Dictionary<string, object>();
@@ -46,9 +46,9 @@ namespace NUtilities.Save
         public void Initialize()
         {
             var go = new GameObject("SaveSystem");
-            go.AddComponent<SaveSystemBehaviour>();
+            var behaviour = go.AddComponent<SaveSystemBehaviour>();
+            behaviour.onApplicationFovus = OnApplicationFocus;
             Object.DontDestroyOnLoad(go);
-            _resolver.InjectGameObject(go);
         }
 
         public void RegisterModel(object model, string fileName, string version = "")
@@ -201,7 +201,7 @@ namespace NUtilities.Save
             return _fileStorage.Exists(fileName);
         }
 
-        public void OnApplicationFocus(bool value)
+        private void OnApplicationFocus(bool value)
         {
             if (!value && _config.saveAllOnFocusLost)
             {

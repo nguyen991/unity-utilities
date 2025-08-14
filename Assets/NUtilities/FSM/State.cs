@@ -7,6 +7,7 @@ namespace NUtilities.FSM
     {
         public string Name { get; private set; }
         public StateMachine<T> StateMachine { get; set; }
+        public T Container => StateMachine.Owner;
         
         private TransitionState _transition;
         

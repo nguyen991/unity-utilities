@@ -11,21 +11,28 @@ namespace TileGame.Game.State
 
         public override void Enter(object context)
         {
-            Debug.Log("GSPlay Enter");
-            
             // add event listener for tile selection
-            StateMachine.Owner.gridController.OnTileSelectedEvent = OnTileSelected;
+            Container.GameController.grid.OnTileSelectedEvent = OnTileSelected;
         }
         
         private void OnTileSelected(Tile tile)
         {
-            Debug.Log("OnTileSelected" + tile.gameObject.name);
+            // check if the tile is on top of the grid
+            if (!Container.GameModel.IsOnTop(tile))
+            {
+                tile.Shake();
+                return;
+            }
+            
+            // move the tile to container
+            Container.GameModel.AddSelectTile(tile);
+            Container.GameController.hold.AddTile(tile);
         }
 
         public override void Exit()
         {
             // remove event listener for tile selection
-            StateMachine.Owner.gridController.OnTileSelectedEvent = null;
+            Container.GameController.grid.OnTileSelectedEvent = null;
         }
     }
 }

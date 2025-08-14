@@ -34,7 +34,7 @@ namespace NUtilities.Popup
         private int _openStateHash;
         private int _closeStateHash;
 
-        public PopupService PopupService { get; private set; } = null;
+        public PopupSystem popupSystem { get; private set; } = null;
 
         protected virtual void Awake()
         {
@@ -157,9 +157,9 @@ namespace NUtilities.Popup
         }
 
         [Inject]
-        public void Inject(PopupService popupService)
+        public void Inject(PopupSystem popupSystem)
         {
-            PopupService = popupService;
+            this.popupSystem = popupSystem;
         }
     }
 }

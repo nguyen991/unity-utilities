@@ -11,20 +11,20 @@ public struct SceneContext
 
 public class STwoScript : MonoBehaviour
 {
-    private LoadingService _loadingService;
+    private LoadingSystem _loadingSystem;
 
     [Inject]
-    public void Inject(SceneContext sceneContext, LoadingService loadingService)
+    public void Inject(SceneContext sceneContext, LoadingSystem loadingSystem)
     {
-        _loadingService = loadingService;
+        _loadingSystem = loadingSystem;
         Debug.Log(
             $"SceneContext: Level = {sceneContext.level}, GameMode = {sceneContext.gameMode}"
         );
-        _loadingService.Hide();
+        _loadingSystem.Hide();
     }
 
     public void ReplaceScene()
     {
-        _loadingService.ReplaceScene("S1").Forget();
+        _loadingSystem.ReplaceScene("S1").Forget();
     }
 }

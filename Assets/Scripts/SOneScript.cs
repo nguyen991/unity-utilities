@@ -14,31 +14,31 @@ public class SOneScript : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI _downloadText;
 
-    private PopupService _popupService;
-    private LoadingService _loadingService;
-    private SaveService _saveSystem;
+    private PopupSystem _popupSystem;
+    private LoadingSystem _loadingSystem;
+    private SaveSystem _saveSystem;
 
     [Inject]
     public void Inject(
-        PopupService popupService,
-        LoadingService loadingService,
-        SaveService saveSystem
+        PopupSystem popupSystem,
+        LoadingSystem loadingSystem,
+        SaveSystem saveSystem
     )
     {
-        _popupService = popupService;
-        _loadingService = loadingService;
-        _loadingService.Hide();
+        _popupSystem = popupSystem;
+        _loadingSystem = loadingSystem;
+        _loadingSystem.Hide();
         _saveSystem = saveSystem;
     }
 
     public void Click()
     {
-        _popupService.Show("base");
+        _popupSystem.Show("base");
     }
 
     public void ReplaceScene()
     {
-        _loadingService
+        _loadingSystem
             .ReplaceScene("S2", new SceneContext() { level = 10, gameMode = 2 })
             .Forget();
     }

@@ -6,12 +6,12 @@ using VContainer.Unity;
 
 namespace NUtilities.Loading
 {
-    public class LoadingService : IInitializable
+    public class LoadingSystem : IInitializable
     {
         private readonly GameObject _prefab;
         private LoadingView _view;
 
-        public LoadingService(GameObject prefab)
+        public LoadingSystem(GameObject prefab)
         {
             _prefab = prefab;
         }

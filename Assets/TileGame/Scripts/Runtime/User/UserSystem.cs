@@ -8,13 +8,13 @@ namespace TileGame.User
 {
     public class UserSystem : IInitializable
     {
-        private readonly SaveService _saveService;
+        private readonly SaveSystem _saveSystem;
         
         public User User { get; private set; }
         
-        public UserSystem(SaveService saveService)
+        public UserSystem(SaveSystem saveSystem)
         {
-            _saveService = saveService;
+            _saveSystem = saveSystem;
         }
         
         public void Initialize()
@@ -23,7 +23,7 @@ namespace TileGame.User
             User = new User();
             
             // load user data
-            _saveService.Load(User, "user");
+            _saveSystem.Load(User, "user");
         }
     }
 }

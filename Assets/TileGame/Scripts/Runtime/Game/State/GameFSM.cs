@@ -1,17 +1,18 @@
 using NUtilities.FSM;
 using TileGame.Game.Controller;
+using TileGame.Game.Manager;
 using UnityEngine;
 
 namespace TileGame.Game.State
 {
-    public class GameFSM : StateMachine<GameController>
+    public class GameFSM : StateMachine<GameManager>
     {
-        public GameFSM(GameController owner) : base(owner)
+        public GameFSM(GameManager owner) : base(owner)
         {
         }
     }
     
-    public class GameFSMState : State<GameController>
+    public class GameFSMState : State<GameManager>
     {
         public GameFSMState(string name) : base(name)
         {

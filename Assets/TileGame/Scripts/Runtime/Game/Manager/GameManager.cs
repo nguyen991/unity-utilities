@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using NUtilities.Loading;
@@ -11,22 +12,27 @@ using VContainer.Unity;
 
 namespace TileGame.Game.Manager
 {
-    public class GameManager : ITickable, IAsyncStartable
+    public class GameManager : ITickable, IAsyncStartable, IDisposable
     {
         private readonly GameFSM _stateMachine;
-        private readonly LoadingService _loadingService;
+        private readonly LoadingSystem _loadingSystem;
         private readonly GameController _gameController;
         
         private StartGameArgs _startGameArgs;
+        private GameModel _gameModel;
         
-        public GameManager(IObjectResolver resolver, LoadingService loadingService, GameController gameController, StartGameArgs startGameArgs, LevelSystem levelSystem)
+        public GameModel GameModel => _gameModel;
+        public GameController GameController => _gameController;
+        
+        public GameManager(IObjectResolver resolver, LoadingSystem loadingSystem, GameController gameController, StartGameArgs startGameArgs, LevelSystem levelSystem)
         {
-            _loadingService = loadingService;
+            _loadingSystem = loadingSystem;
             _gameController = gameController;
             _startGameArgs = startGameArgs;
+            _gameModel = new GameModel();
             
             // create state machine
-            _stateMachine = new GameFSM(_gameController);
+            _stateMachine = new GameFSM(this);
             
             // register states
             _stateMachine.AddState(resolver.Resolve<GSInit>());
@@ -43,12 +49,17 @@ namespace TileGame.Game.Manager
             _stateMachine.ChangeState(GameConst.State.Init, _startGameArgs);
             
             // hide loading screen
-            _loadingService.Hide();
+            _loadingSystem.Hide();
         }
         
         public void Tick()
         {
             _stateMachine.Update(Time.deltaTime);
+        }
+
+        public void Dispose()
+        {
+            _stateMachine.Destroy();
         }
     }
 }

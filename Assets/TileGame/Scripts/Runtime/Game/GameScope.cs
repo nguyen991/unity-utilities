@@ -17,7 +17,7 @@ namespace TileGame.Game
             builder.Register<GSInit>(Lifetime.Transient).AsSelf();
             builder.Register<GSPlay>(Lifetime.Transient).AsSelf();
             builder.Register<GSPause>(Lifetime.Transient).AsSelf();
-            builder.RegisterEntryPoint<GameManager>().WithParameter("gameController", gameController);
+            builder.RegisterEntryPoint<GameManager>().WithParameter("gameController", gameController).AsSelf();
         }
     }
 }

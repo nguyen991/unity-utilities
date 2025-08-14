@@ -6,14 +6,14 @@ using VContainer.Unity;
 
 namespace NUtilities.Popup
 {
-    public class PopupService : IInitializable
+    public class PopupSystem : IInitializable
     {
         private readonly PopupSO _config;
         private readonly Dictionary<string, Popup> _popups;
         private readonly IObjectResolver _container;
         private Transform _popupParent;
 
-        public PopupService(PopupSO config, IObjectResolver container)
+        public PopupSystem(PopupSO config, IObjectResolver container)
         {
             _config = config;
             _container = container;
