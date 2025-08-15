@@ -6,10 +6,11 @@ namespace NUtilities.Pool
     public class PoolObject : MonoBehaviour
     {
         public IObjectPool<GameObject> pool;
-        
+
         public void Release()
         {
-            pool.Release(gameObject);
+            if (gameObject.activeInHierarchy)
+                pool.Release(gameObject);
         }
     }
 }

@@ -7,8 +7,9 @@ namespace TileGame.Game.State
     public class GSPause : GameFSMState
     {
         private readonly PopupSystem _popupSystem;
-        
-        public GSPause(PopupSystem popup) : base(GameConst.State.Pause)
+
+        public GSPause(PopupSystem popup)
+            : base(GameConst.State.Pause)
         {
             _popupSystem = popup;
         }
@@ -17,15 +18,17 @@ namespace TileGame.Game.State
         {
             // pause the game
             Time.timeScale = 0;
-            
+
             // open pause menu UI
-            _popupSystem.ShowAsync("pause").ContinueWith(_ =>
-            {
-                // exit state
-                SetTransition(GameConst.State.Play);
-            });
+            _popupSystem
+                .ShowAsync("pause")
+                .ContinueWith(_ =>
+                {
+                    // exit state
+                    SetTransition(GameConst.State.Play);
+                });
         }
-        
+
         public override void Exit()
         {
             // resume the game

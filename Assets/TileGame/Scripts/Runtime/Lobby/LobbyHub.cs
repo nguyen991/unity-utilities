@@ -1,9 +1,10 @@
 using System;
 using Cysharp.Threading.Tasks;
 using NUtilities.Loading;
+using TileGame.Game;
 using TileGame.Game.Model;
-using TileGame.Level;
 using TileGame.User;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -13,7 +14,8 @@ namespace TileGame.Lobby
     public class LobbyHub : MonoBehaviour
     {
         public Button startButton;
-        
+        public TMP_InputField levelInputField;
+
         private LoadingSystem _loadingSystem;
         private UserSystem _userSystem;
 
@@ -26,12 +28,20 @@ namespace TileGame.Lobby
 
         private void Start()
         {
+            _loadingSystem.Hide();
             startButton.onClick.AddListener(OnStartButtonClicked);
         }
 
         private void OnStartButtonClicked()
         {
-            _loadingSystem.ReplaceScene("Game", new StartGameArgs() { level = 1 }).Forget();
+            var level = 1;
+            if (int.TryParse(levelInputField.text, out var parsedLevel))
+            {
+                level = parsedLevel;
+            }
+            _loadingSystem
+                .ReplaceScene(GameConst.Scene.Game, new StartGameArgs() { level = level })
+                .Forget();
         }
     }
 }

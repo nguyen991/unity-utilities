@@ -3,21 +3,22 @@ using UnityEngine;
 
 namespace NUtilities.FSM
 {
-    public class StateMachine<T> where T : class
+    public class StateMachine<T>
+        where T : class
     {
         private readonly Dictionary<string, State<T>> _states;
         private State<T> _currentState;
         private TransitionState _currentTransition;
-        
+
         public T Owner { get; private set; }
-        
+
         public StateMachine(T owner)
         {
             Owner = owner;
             _states = new Dictionary<string, State<T>>();
             _currentState = null;
         }
-        
+
         public string CurrentState => _currentState?.Name;
 
         public void AddState(State<T> state)
@@ -27,7 +28,7 @@ namespace NUtilities.FSM
                 Debug.LogError("Cannot add a null state to the state machine.");
                 return;
             }
-            
+
             if (!_states.TryAdd(state.Name, state))
             {
                 Debug.LogWarning($"State {state.Name} already exists in the state machine.");
@@ -47,7 +48,7 @@ namespace NUtilities.FSM
                 Debug.LogError($"State {name} does not exist in the state machine.");
                 return;
             }
-            
+
             if (newState == _currentState)
             {
                 Debug.LogWarning($"Already in state: {name}");
@@ -59,12 +60,12 @@ namespace NUtilities.FSM
             _currentState.Enter(context);
             _currentState.EnterAsync(context);
         }
-        
+
         public void Update(float deltaTime)
         {
             // Update the current state if it exists
             _currentState?.Update(deltaTime);
-            
+
             // Check for transitions
             _currentTransition = _currentState?.GetTransition();
             if (_currentTransition != null)
@@ -86,8 +87,7 @@ namespace NUtilities.FSM
      */
     public class GameObjectStateMachine : StateMachine<GameObject>
     {
-        public GameObjectStateMachine(GameObject owner) : base(owner)
-        {
-        }
+        public GameObjectStateMachine(GameObject owner)
+            : base(owner) { }
     }
 }

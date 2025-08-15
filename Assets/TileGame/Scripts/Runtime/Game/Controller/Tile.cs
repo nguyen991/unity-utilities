@@ -1,6 +1,6 @@
-using System;
 using LitMotion;
 using LitMotion.Extensions;
+using NUtilities.Pool;
 using TileGame.Game.Model;
 using TMPro;
 using UnityEngine;
@@ -11,15 +11,53 @@ namespace TileGame.Game.Controller
     [RequireComponent(typeof(BoxCollider2D))]
     public class Tile : MonoBehaviour
     {
+        public enum TileState
+        {
+            Under,
+            Over,
+            Holding,
+            Removing,
+        }
+
         public SpriteRenderer iconRenderer;
         public SpriteRenderer maskRenderer;
+
         public UnityAction<Tile> OnTileSelected;
 
-        public TileData data { get; } = new();
-        
+        public TileData data { get; private set; } = new();
+
         private BoxCollider2D _collider2D;
 
-        public bool selectable
+        private TileState _state;
+        public TileState State
+        {
+            get => _state;
+            set
+            {
+                _state = value;
+                switch (value)
+                {
+                    case TileState.Under:
+                        maskRenderer.enabled = true;
+                        Touchable = true;
+                        break;
+                    case TileState.Over:
+                        maskRenderer.enabled = false;
+                        Touchable = true;
+                        break;
+                    case TileState.Holding:
+                        maskRenderer.enabled = false;
+                        Touchable = false;
+                        break;
+                    case TileState.Removing:
+                        maskRenderer.enabled = false;
+                        Touchable = false;
+                        break;
+                }
+            }
+        }
+
+        public bool Touchable
         {
             get => _collider2D.enabled;
             set => _collider2D.enabled = value;
@@ -40,20 +78,26 @@ namespace TileGame.Game.Controller
             data.id = id;
             data.layer = layer;
             data.index = index;
-            selectable = true;
-            
+            State = TileState.Over;
+
             // set debug text
             GetComponentInChildren<TextMeshPro>().text = data.id.ToString();
         }
 
         public void Shake()
         {
-            LMotion.Shake.Create(Vector3.zero, Vector3.one * 20f, 0.15f).BindToLocalEulerAngles(transform);
+            LMotion
+                .Shake.Create(Vector3.zero, GameConst.ShakeVector, 0.15f)
+                .BindToLocalEulerAngles(transform);
         }
 
-        public void SetOverlay(bool value)
+        public MotionHandle Release()
         {
-            maskRenderer.enabled = value;
+            return LMotion
+                .Create(Vector3.one, Vector3.zero, 0.25f)
+                .WithEase(Ease.InBack)
+                .WithOnComplete(() => GetComponent<PoolObject>().Release())
+                .BindToLocalScale(transform);
         }
     }
 }

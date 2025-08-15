@@ -17,3 +17,9 @@ MonoBehaviour:
   - name: base
     prefab: {fileID: 7457564774484917757, guid: 2573e04e2ad2143feb439e207ac5b976, type: 3}
     preload: 1
+  - name: lose
+    prefab: {fileID: 3934042047242084094, guid: ab06d275204827a46b8aa041c066bcc1, type: 3}
+    preload: 1
+  - name: end
+    prefab: {fileID: 3934042047242084094, guid: 0834cbe2aaf6e364aa1057489e6c2268, type: 3}
+    preload: 1
